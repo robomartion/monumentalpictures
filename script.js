@@ -15,6 +15,11 @@ const videoData = [
         title: 'Samsara',
         director: 'Robert Marsh'
     },
+    {
+        src: 'videos/sacrifice.webm',
+        title: 'Sacrifice',
+        director: 'Robert Marsh'
+    }
 ];
 
 class VideoGallery {
@@ -369,4 +374,5 @@ function handleWebmFile(file, title, director) {
             window.videoGallery.addVideo(videoInfo);
         }
     }
+
 }
