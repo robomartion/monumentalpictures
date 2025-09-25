@@ -374,5 +374,4 @@ function handleWebmFile(file, title, director) {
             window.videoGallery.addVideo(videoInfo);
         }
     }
-
 }
