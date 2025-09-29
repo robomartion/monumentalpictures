@@ -1,25 +1,25 @@
 // Video data structure - this will hold your video information
 const videoData = [
     {
+        src: 'videos/samsara.webm',
+        title: 'Samsara',
+        director: 'Robert Marsh'
+    },
+        {
         src: 'videos/blood-robert marsh.webm', // Replace with actual .webm file paths
         title: 'Blood',
         director: 'Robert Marsh'
     },
     {
+        src: 'videos/sacrifice.webm',
+        title: 'Sansar',
+        director: 'Robert Marsh'
+    }
+        {
         src: 'videos/forestgirlshort.webm',
         title: 'The Girl in the Forest', 
         director: 'Robert Marsh'
     },
-    {
-        src: 'videos/samsara.webm',
-        title: 'Samsara',
-        director: 'Robert Marsh'
-    },
-    {
-        src: 'videos/sacrifice.webm',
-        title: 'Sacrifice',
-        director: 'Robert Marsh'
-    }
 ];
 
 class VideoGallery {
@@ -374,4 +374,5 @@ function handleWebmFile(file, title, director) {
             window.videoGallery.addVideo(videoInfo);
         }
     }
+
 }
