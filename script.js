@@ -14,12 +14,12 @@ const videoData = [
         src: 'videos/sacrifice.webm',
         title: 'Sansar',
         director: 'Robert Marsh'
-    }
+    },
         {
         src: 'videos/forestgirlshort.webm',
         title: 'The Girl in the Forest', 
         director: 'Robert Marsh'
-    },
+    }
 ];
 
 class VideoGallery {
