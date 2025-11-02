@@ -3,32 +3,105 @@ const videoData = [
        {
         src: 'videos/collateral.webm',
         title: 'Collateral',
-        director: 'Nora Tunsli'
+        director: 'Nora Tunsli',
+        crew: {
+            director: 'Nora Tunsli',
+            producer: '[Producer Name]',
+            cinematographer: 'Robert Marsh',
+            editor: 'Robert Marsh',
+            sound: 'Srishti Pai',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[Nora Tunsli came to us with the vision of a James Bond style action film combined with The Batman.]',
+            '[It was shot using a virtual production LED wall and a high octane chase sequence fully rendered using Unreal Engine.]',
+            '[Optional third paragraph if needed.]'
+        ]
     },
       {
         src: 'videos/dearsamwebsite.webm',
         title: 'Dear Sam',
-        director: 'Sanaa Bat-Erdene'
+        director: 'Sanaa Bat-Erdene',
+        crew: {
+            director: 'Sanaa Bat-Erdene',
+            producer: '[Producer Name]',
+            cinematographer: '[Cinematographer Name]',
+            editor: '[Editor Name]',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[First paragraph describing the project, its vision, and key elements.]',
+            '[Second paragraph with additional details about production, themes, or notable aspects.]',
+            '[Optional third paragraph if needed.]'
+        ]
     },
     {
         src: 'videos/samsara.webm',
         title: 'Samsara',
-        director: 'Robert Marsh'
+        director: 'Robert Marsh',
+        crew: {
+            director: 'Robert Marsh',
+            producer: '[Producer Name]',
+            cinematographer: '[Cinematographer Name]',
+            editor: '[Editor Name]',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[First paragraph describing the project, its vision, and key elements.]',
+            '[Second paragraph with additional details about production, themes, or notable aspects.]',
+            '[Optional third paragraph if needed.]'
+        ]
     },
         {
         src: 'videos/blood-robert marsh.webm', // Replace with actual .webm file paths
         title: 'Blood',
-        director: 'Robert Marsh'
+        director: 'Robert Marsh',
+        crew: {
+            director: 'Robert Marsh',
+            producer: '[Producer Name]',
+            cinematographer: '[Cinematographer Name]',
+            editor: '[Editor Name]',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[First paragraph describing the project, its vision, and key elements.]',
+            '[Second paragraph with additional details about production, themes, or notable aspects.]',
+            '[Optional third paragraph if needed.]'
+        ]
     },
     {
         src: 'videos/sansar.webm',
         title: 'Sansar',
-        director: 'Robert Marsh'
+        director: 'Robert Marsh',
+        crew: {
+            director: 'Robert Marsh',
+            producer: '[Producer Name]',
+            cinematographer: '[Cinematographer Name]',
+            editor: '[Editor Name]',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[First paragraph describing the project, its vision, and key elements.]',
+            '[Second paragraph with additional details about production, themes, or notable aspects.]',
+            '[Optional third paragraph if needed.]'
+        ]
     },
         {
         src: 'videos/forestgirlshort.webm',
         title: 'The Girl in the Forest', 
-        director: 'Robert Marsh'
+        director: 'Robert Marsh',
+        crew: {
+            director: 'Robert Marsh',
+            producer: '[Producer Name]',
+            cinematographer: '[Cinematographer Name]',
+            editor: '[Editor Name]',
+            other: '[Other Crew Members]'
+        },
+        description: [
+            '[First paragraph describing the project, its vision, and key elements.]',
+            '[Second paragraph with additional details about production, themes, or notable aspects.]',
+            '[Optional third paragraph if needed.]'
+        ]
     }
 ];
 
@@ -43,6 +116,97 @@ class VideoGallery {
     init() {
         this.loadVideos();
         this.setupEventListeners();
+    }
+
+    toggleVideoDetail(videoInfoDiv, videoIndex) {
+        const videoInfo = videoData[videoIndex];
+        if (!videoInfo) return;
+        
+        const expandedSection = videoInfoDiv.querySelector('.video-info-expanded');
+        const videoItem = videoInfoDiv.closest('.video-item');
+        const isExpanded = videoInfoDiv.classList.contains('expanded');
+        
+        if (isExpanded) {
+            // Collapse - get the stored or current height for smooth reverse animation
+            const storedHeight = expandedSection.dataset.expandedHeight || expandedSection.scrollHeight;
+            
+            // Ensure we're starting from the expanded state
+            expandedSection.style.maxHeight = `${storedHeight}px`;
+            
+            // Force reflow
+            expandedSection.offsetHeight;
+            
+            // Trigger collapse animation - exact reverse of expand
+            requestAnimationFrame(() => {
+                expandedSection.style.maxHeight = '0';
+                videoInfoDiv.classList.remove('expanded');
+                videoItem.classList.remove('info-expanded');
+                // Reset gradient height
+                videoItem.style.setProperty('--gradient-height', '200px');
+            });
+        } else {
+            // Expand - populate content if not already done
+            const crewListEl = expandedSection.querySelector('.crew-list');
+            const descriptionParasEl = expandedSection.querySelector('.description-paragraphs');
+            
+            // Populate description paragraphs if empty
+            if (descriptionParasEl.children.length === 0 && videoInfo.description && Array.isArray(videoInfo.description)) {
+                videoInfo.description.forEach(para => {
+                    if (para && !para.startsWith('[')) { // Only show non-placeholder paragraphs
+                        const paraEl = document.createElement('p');
+                        paraEl.className = 'description-paragraph';
+                        paraEl.textContent = para;
+                        descriptionParasEl.appendChild(paraEl);
+                    }
+                });
+            }
+            
+            // Populate crew if empty
+            if (crewListEl.children.length === 0 && videoInfo.crew) {
+                Object.entries(videoInfo.crew).forEach(([role, name]) => {
+                    if (name && !name.startsWith('[')) { // Only show non-placeholder entries
+                        const crewItem = document.createElement('div');
+                        crewItem.className = 'crew-item';
+                        crewItem.innerHTML = `<span class="crew-role">${role.charAt(0).toUpperCase() + role.slice(1)}</span> <span class="crew-name">${name}</span>`;
+                        crewListEl.appendChild(crewItem);
+                    }
+                });
+            }
+            
+            // Calculate actual height needed for expanded content
+            // First, temporarily show expanded section to measure its height
+            expandedSection.style.maxHeight = 'none';
+            expandedSection.style.opacity = '1';
+            const expandedHeight = expandedSection.scrollHeight;
+            
+            // Store the height for collapse animation
+            expandedSection.dataset.expandedHeight = expandedHeight;
+            
+            // Reset for animation
+            expandedSection.style.maxHeight = '0';
+            expandedSection.style.opacity = '';
+            
+            // Measure total video-info height when expanded
+            // video-info is positioned at bottom: 60px, so we need to measure from its top when expanded
+            const titleHeight = videoInfoDiv.querySelector('.video-title').offsetHeight;
+            const directorHeight = videoInfoDiv.querySelector('.video-director').offsetHeight;
+            const spacing = 25; // margin-top + padding-top of expanded section
+            const totalContentHeight = titleHeight + directorHeight + spacing + expandedHeight;
+            
+            // Gradient should cover from bottom of video-item (0) up to cover all expanded content
+            // Since video-info is at bottom: 60px, gradient needs to be: 60px (bottom offset) + total content height + some padding
+            const gradientHeight = Math.max(200, 60 + totalContentHeight + 40);
+            
+            // Set gradient height dynamically
+            videoItem.style.setProperty('--gradient-height', `${gradientHeight}px`);
+            
+            // Expand - use requestAnimationFrame to ensure transition works
+            requestAnimationFrame(() => {
+                expandedSection.style.maxHeight = `${expandedHeight}px`;
+                videoInfoDiv.classList.add('expanded');
+                videoItem.classList.add('info-expanded');
+            });
+        }
     }
 
     loadVideos() {
@@ -64,12 +228,22 @@ class VideoGallery {
         video.preload = 'metadata';
         video.autoplay = false; // Disable autoplay - videos will only play when scrolled into view
         
-        // Create video info overlay
+        // Create video info overlay - this same div will expand on click
         const videoInfoDiv = document.createElement('div');
         videoInfoDiv.className = 'video-info';
+        videoInfoDiv.dataset.index = index;
         videoInfoDiv.innerHTML = `
             <div class="video-title">${videoInfo.title}</div>
             <div class="video-director">${videoInfo.director}</div>
+            <div class="video-info-expanded">
+                <div class="video-detail-description">
+                    <div class="description-paragraphs"></div>
+                </div>
+                <div class="video-detail-crew">
+                    <h3>Crew</h3>
+                    <div class="crew-list"></div>
+                </div>
+            </div>
         `;
         
         // Handle video load events
@@ -91,6 +265,16 @@ class VideoGallery {
             `;
         });
 
+        // Add click handler to expand/collapse video info
+        videoItem.addEventListener('click', (e) => {
+            // Only prevent if clicking directly on video element that has controls
+            if (e.target.tagName === 'VIDEO' && e.target.controls) {
+                return; // Let video controls handle the click
+            }
+            // Toggle expanded state
+            this.toggleVideoDetail(videoInfoDiv, index);
+        });
+        
         videoItem.appendChild(video);
         videoItem.appendChild(videoInfoDiv);
         return videoItem;
@@ -190,11 +374,21 @@ class VideoGallery {
 
         // Close menu with Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && overlayMenu.classList.contains('active')) {
-                overlayMenu.classList.remove('active');
-                burgerMenu.classList.remove('active');
-                logo.style.opacity = '1'; // Show logo
-                this.resumeVisibleVideos();
+            if (e.key === 'Escape') {
+                if (overlayMenu.classList.contains('active')) {
+                    overlayMenu.classList.remove('active');
+                    burgerMenu.classList.remove('active');
+                    logo.style.opacity = '1'; // Show logo
+                    this.resumeVisibleVideos();
+                } else {
+                    // Close any expanded video info
+                    document.querySelectorAll('.video-info.expanded').forEach(videoInfo => {
+                        const videoIndex = parseInt(videoInfo.dataset.index);
+                        if (!isNaN(videoIndex)) {
+                            this.toggleVideoDetail(videoInfo, videoIndex);
+                        }
+                    });
+                }
             }
         });
 
