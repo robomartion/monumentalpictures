@@ -1,5 +1,10 @@
 // Video data structure - this will hold your video information
 const videoData = [
+       {
+        src: 'videos/collateral.webm',
+        title: 'Collateral',
+        director: 'Nora Tunsli'
+    },
       {
         src: 'videos/dearsamwebsite.webm',
         title: 'Dear Sam',
@@ -381,5 +386,6 @@ function handleWebmFile(file, title, director) {
     }
 
 }
+
 
 
