@@ -2,6 +2,8 @@
 const videoData = [
        {
         src: 'videos/collateral.webm',
+        srcMp4: 'videos/collateral.mp4', // Fallback for browsers that don't support .webm
+        poster: 'videos/collateral.jpg', // Optional: path to poster image (leave empty if not available)
         title: 'Collateral',
         director: 'Nora Tunsli',
         crew: {
@@ -20,6 +22,8 @@ const videoData = [
     },
       {
         src: 'videos/dearsamwebsite.webm',
+        srcMp4: 'videos/dearsamwebsite.mp4',
+        poster: 'videos/dearsamwebsite.jpg',
         title: 'Dear Sam',
         director: 'Sanaa Bat-Erdene',
         crew: {
@@ -37,6 +41,8 @@ const videoData = [
     },
     {
         src: 'videos/samsara.webm',
+        srcMp4: 'videos/samsara.mp4',
+        poster: 'videos/samsara.jpg',
         title: 'Samsara',
         director: 'Robert Marsh',
         crew: {
@@ -53,7 +59,9 @@ const videoData = [
         ]
     },
         {
-        src: 'videos/blood-robert marsh.webm', // Replace with actual .webm file paths
+        src: 'videos/blood-robert marsh.webm',
+        srcMp4: 'videos/blood-robert marsh.mp4',
+        poster: 'videos/blood-robert marsh.jpg',
         title: 'Blood',
         director: 'Robert Marsh',
         crew: {
@@ -71,6 +79,8 @@ const videoData = [
     },
     {
         src: 'videos/sansar.webm',
+        srcMp4: 'videos/sansar.mp4',
+        poster: 'videos/sansar.jpg',
         title: 'Sansar',
         director: 'Robert Marsh',
         crew: {
@@ -88,6 +98,8 @@ const videoData = [
     },
         {
         src: 'videos/forestgirlshort.webm',
+        srcMp4: 'videos/forestgirlshort.mp4',
+        poster: 'videos/forestgirlshort.jpg',
         title: 'The Girl in the Forest', 
         director: 'Robert Marsh',
         crew: {
@@ -221,12 +233,38 @@ class VideoGallery {
         videoItem.className = 'video-item loading';
         videoItem.dataset.index = index;
 
+        // Create loading image placeholder
+        const loadingImage = document.createElement('img');
+        loadingImage.className = 'video-loading-image';
+        if (videoInfo.poster) {
+            loadingImage.src = videoInfo.poster;
+        }
+        loadingImage.alt = ''; // Empty alt text - only image should be visible
+
         const video = document.createElement('video');
-        video.src = videoInfo.src;
         video.muted = true;
         video.loop = true;
         video.preload = 'metadata';
         video.autoplay = false; // Disable autoplay - videos will only play when scrolled into view
+        
+        // Add video sources with fallback
+        const sourceWebm = document.createElement('source');
+        sourceWebm.src = videoInfo.src;
+        sourceWebm.type = 'video/webm';
+        video.appendChild(sourceWebm);
+        
+        // Add MP4 fallback if available
+        if (videoInfo.srcMp4) {
+            const sourceMp4 = document.createElement('source');
+            sourceMp4.src = videoInfo.srcMp4;
+            sourceMp4.type = 'video/mp4';
+            video.appendChild(sourceMp4);
+        }
+        
+        // Add poster image to video if available
+        if (videoInfo.poster) {
+            video.poster = videoInfo.poster;
+        }
         
         // Create video info overlay - this same div will expand on click
         const videoInfoDiv = document.createElement('div');
@@ -249,11 +287,19 @@ class VideoGallery {
         // Handle video load events
         video.addEventListener('loadeddata', () => {
             videoItem.classList.remove('loading');
+            // Hide loading image when video loads
+            if (loadingImage) {
+                loadingImage.style.display = 'none';
+            }
             // Don't auto-play on load - only play when scrolled into view
         });
 
         video.addEventListener('error', () => {
             videoItem.classList.remove('loading');
+            // Hide loading image on error
+            if (loadingImage) {
+                loadingImage.style.display = 'none';
+            }
             videoItem.style.backgroundColor = '#222';
             videoItem.innerHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; z-index: 10;">
@@ -275,6 +321,7 @@ class VideoGallery {
             this.toggleVideoDetail(videoInfoDiv, index);
         });
         
+        videoItem.appendChild(loadingImage);
         videoItem.appendChild(video);
         videoItem.appendChild(videoInfoDiv);
         return videoItem;
